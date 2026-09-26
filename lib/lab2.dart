@@ -1,10 +1,10 @@
 void checkBalance({required String name, required double balance}) =>
-    print('$name: \$${balance.toStringAsFixed(2)}');
+    print('$name : $balance');
 
 double deposit({required double currentBalance, double? amount}) {
   double addAmount = amount ?? 0.0;
   double updatedBalance = currentBalance + addAmount;
-  print('+\$$addAmount. Баланс: \$${updatedBalance.toStringAsFixed(2)}');
+  print('+$addAmount. balance: $updatedBalance');
   return updatedBalance;
 }
 
@@ -16,38 +16,38 @@ double withdraw({
 }) {
   int enteredPin = pinCode ?? 0000;
   if (enteredPin != 7777) {
-    print('Неверный ПИН-код.');
+    print('wrong');
     return currentBalance;
   }
 
   double subAmount = amount ?? 0.0;
 
   if (subAmount > currentBalance) {
-    print('Недостаточно средств.');
+    print('less balance.');
     return currentBalance;
   }
 
   double updatedBalance = currentBalance - subAmount;
-  print('-\$$subAmount. Баланс: \$${updatedBalance.toStringAsFixed(2)}');
+  print('-$subAmount. balance: $updatedBalance');
   return updatedBalance;
 }
 
 void main() {
   double myBalance = 1500.0;
 
-  checkBalance(name: 'Ибрахим', balance: myBalance);
+  checkBalance(name: 'Ibrakhim', balance: myBalance);
 
   myBalance = deposit(currentBalance: myBalance, amount: 350.0);
 
   myBalance = withdraw(
-    name: 'Ибрахим',
+    name: 'Ibrakhim',
     currentBalance: myBalance,
     amount: 200.0,
     pinCode: 7777,
   );
 
   myBalance = withdraw(
-    name: 'Ибрахим',
+    name: 'Ibrakhim',
     currentBalance: myBalance,
     amount: 50.0,
     pinCode: 1111,
