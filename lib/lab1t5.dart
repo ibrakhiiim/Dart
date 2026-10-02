@@ -1,5 +1,5 @@
 void main(){
-  int n =13;
+  int n =35;
   bool Prime=true;
   if(n <=1){Prime=false;}
 
