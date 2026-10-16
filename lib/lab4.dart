@@ -31,7 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static const int _defaultLikes = 1000;
 
   bool isFollowing = false;
-  bool isLiked = false;
   int followers = _defaultFollowers;
   int likes = _defaultLikes;
 
@@ -42,23 +41,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void toggleLike() {
+  void addLike() {
     setState(() {
-      isLiked = !isLiked;
-      likes += isLiked ? 1 : -1;
+      likes++;
+    });
+  }
+
+  void removeLike() {
+    setState(() {
+      if (likes > 0) likes--;
     });
   }
 
   void resetAll() {
     setState(() {
       isFollowing = false;
-      isLiked = false;
       followers = _defaultFollowers;
       likes = _defaultLikes;
     });
   }
 
-  Widget _stat(String label, String value) {
+  Widget _counter(String label, String value) {
     return Column(
       children: [
         Text(
@@ -115,43 +118,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Student of Narxoz',
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _stat('Followers', '$followers'),
-                      _stat('Likes', '$likes'),
-                    ],
-                  ),
                   const SizedBox(height: 24),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: isFollowing
-                            ? OutlinedButton.icon(
-                          onPressed: toggleFollow,
-                          icon: const Icon(Icons.check),
-                          label: const Text('Following'),
-                        )
-                            : FilledButton.icon(
-                          onPressed: toggleFollow,
-                          icon: const Icon(Icons.person_add),
-                          label: const Text('Follow'),
+                        child: Column(
+                          children: [
+                            _counter('Followers', '$followers'),
+                            const SizedBox(height: 12),
+                            isFollowing
+                                ? OutlinedButton(
+                              onPressed: toggleFollow,
+                              child: const Text('Following'),
+                            )
+                                : FilledButton(
+                              onPressed: toggleFollow,
+                              child: const Text('Follow'),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      IconButton.filledTonal(
-                        onPressed: toggleLike,
-                        iconSize: 28,
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : null,
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _counter('Likes', '$likes'),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton.filledTonal(
+                                  onPressed: removeLike,
+                                  icon: const Icon(Icons.remove),
+                                  tooltip: 'Remove like',
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                  child: Icon(Icons.favorite, color: Colors.red),
+                                ),
+                                IconButton.filledTonal(
+                                  onPressed: addLike,
+                                  icon: const Icon(Icons.add),
+                                  tooltip: 'Add like',
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        tooltip: isLiked ? 'Unlike' : 'Like',
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
                   TextButton.icon(
                     onPressed: resetAll,
                     icon: const Icon(Icons.refresh),
