@@ -5,17 +5,17 @@ import 'services/cart_controller.dart';
 import 'theme/app_theme.dart';
 
 void main() {
-  runApp(const TechHubApp());
+  runApp(const TechMarketApp());
 }
 
-class TechHubApp extends StatefulWidget {
-  const TechHubApp({super.key});
+class TechMarketApp extends StatefulWidget {
+  const TechMarketApp({super.key});
 
   @override
-  State<TechHubApp> createState() => _TechHubAppState();
+  State<TechMarketApp> createState() => _TechMarketAppState();
 }
 
-class _TechHubAppState extends State<TechHubApp> {
+class _TechMarketAppState extends State<TechMarketApp> {
   final CartController _cart = CartController();
 
   @override
@@ -29,7 +29,7 @@ class _TechHubAppState extends State<TechHubApp> {
     return CartScope(
       controller: _cart,
       child: MaterialApp(
-        title: 'TechHub',
+        title: 'Tech Market',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         builder: (context, child) {
