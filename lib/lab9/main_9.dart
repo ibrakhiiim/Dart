@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// ============================================================
-// MAIN — ChangeNotifierProvider wraps MaterialApp
-// ============================================================
-
 void main() {
   runApp(
-    // Provider is ABOVE MaterialApp, so every screen (route)
-    // gets the SAME CartProvider instance.
     ChangeNotifierProvider(
       create: (_) => CartProvider(),
       child: const MyApp(),
@@ -33,10 +27,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// ============================================================
-// MODEL
-// ============================================================
-
 class Product {
   final int id;
   final String name;
@@ -60,14 +50,9 @@ const List<Product> kProducts = [
   Product(id: 6, name: 'Speaker', price: 79.90, icon: Icons.speaker),
 ];
 
-// ============================================================
-// PROVIDER — CartProvider extends ChangeNotifier
-// ============================================================
-
 class CartProvider extends ChangeNotifier {
   final List<Product> _items = [];
 
-  /// Read-only list, so nobody can change it without notifyListeners().
   List<Product> get items => List.unmodifiable(_items);
 
   int get count => _items.length;
@@ -97,10 +82,6 @@ class CartProvider extends ChangeNotifier {
   }
 }
 
-// ============================================================
-// WIDGET — cart icon with live badge (used on both screens)
-// ============================================================
-
 class CartBadgeButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
@@ -108,7 +89,6 @@ class CartBadgeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // select() rebuilds this widget ONLY when count changes.
     final count = context.select<CartProvider, int>((cart) => cart.count);
 
     return IconButton(
@@ -122,10 +102,6 @@ class CartBadgeButton extends StatelessWidget {
     );
   }
 }
-
-// ============================================================
-// SCREEN 1 — Catalog
-// ============================================================
 
 class CatalogScreen extends StatelessWidget {
   const CatalogScreen({super.key});
@@ -167,12 +143,10 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Rebuilds only this card when THIS product enters/leaves the cart.
     final inCart =
-        context.select<CartProvider, bool>((cart) => cart.isInCart(product));
+    context.select<CartProvider, bool>((cart) => cart.isInCart(product));
     final colors = Theme.of(context).colorScheme;
 
-    // read() = just call a method, no listening.
     void onToggle() => context.read<CartProvider>().toggle(product);
 
     return Card(
@@ -194,25 +168,21 @@ class ProductCard extends StatelessWidget {
             const SizedBox(height: 8),
             inCart
                 ? OutlinedButton.icon(
-                    onPressed: onToggle,
-                    icon: const Icon(Icons.check),
-                    label: const Text('In Cart'),
-                  )
+              onPressed: onToggle,
+              icon: const Icon(Icons.check),
+              label: const Text('In Cart'),
+            )
                 : FilledButton.icon(
-                    onPressed: onToggle,
-                    icon: const Icon(Icons.add_shopping_cart),
-                    label: const Text('Add to Cart'),
-                  ),
+              onPressed: onToggle,
+              icon: const Icon(Icons.add_shopping_cart),
+              label: const Text('Add to Cart'),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-// ============================================================
-// SCREEN 2 — Cart View
-// ============================================================
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -242,7 +212,6 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // watch() = rebuild the whole screen on every cart change.
     final cart = context.watch<CartProvider>();
     final notInCart = kProducts.where((p) => !cart.isInCart(p)).toList();
 
@@ -253,41 +222,38 @@ class CartScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // List of selected products
           Expanded(
             child: cart.items.isEmpty
                 ? const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.remove_shopping_cart_outlined, size: 64),
-                        SizedBox(height: 8),
-                        Text('Your cart is empty'),
-                      ],
-                    ),
-                  )
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.remove_shopping_cart_outlined, size: 64),
+                  SizedBox(height: 8),
+                  Text('Your cart is empty'),
+                ],
+              ),
+            )
                 : ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: cart.items.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (_, index) {
-                      final product = cart.items[index];
-                      return ListTile(
-                        leading: CircleAvatar(child: Icon(product.icon)),
-                        title: Text(product.name),
-                        subtitle:
-                            Text('\$${product.price.toStringAsFixed(2)}'),
-                        trailing: IconButton(
-                          tooltip: 'Remove',
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => cart.remove(product),
-                        ),
-                      );
-                    },
+              padding: const EdgeInsets.all(8),
+              itemCount: cart.items.length,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (_, index) {
+                final product = cart.items[index];
+                return ListTile(
+                  leading: CircleAvatar(child: Icon(product.icon)),
+                  title: Text(product.name),
+                  subtitle:
+                  Text('\$${product.price.toStringAsFixed(2)}'),
+                  trailing: IconButton(
+                    tooltip: 'Remove',
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () => cart.remove(product),
                   ),
+                );
+              },
+            ),
           ),
-
-          // Adding from Screen 2 — also syncs back to the catalog
           if (notInCart.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -312,8 +278,6 @@ class CartScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-          // Total price + Clear All
           Material(
             elevation: 8,
             child: SafeArea(
